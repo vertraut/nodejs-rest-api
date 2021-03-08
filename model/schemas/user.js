@@ -44,6 +44,18 @@ const userSchema = new Schema(
   { versionKey: false, timestamps: true }
 );
 
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    return next();
+  }
+  const salt = await bcrypt.genSaltSync(SALT_WORK_FACKTOR);
+  this.password = await bcrypt.hash(this.password, salt, null);
+});
+
+userSchema.methods.validPassword = async function (pass) {
+  return await bcrypt.compare(pass, this.password);
+};
+
 const User = model("user", userSchema);
 
 module.exports = User;
