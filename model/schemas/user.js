@@ -1,5 +1,4 @@
-const mongoose = require("mongoose");
-const { Schema, model } = mongoose;
+const { Schema, model } = require("mongoose");
 const bcrypt = require("bcryptjs");
 
 const { Sex } = require("../../helpers/constats");
@@ -13,15 +12,6 @@ const userSchema = new Schema(
       minlength: 2,
       default: "Guest",
     },
-    sex: {
-      type: String,
-      enum: {
-        values: [Sex.MALE, Sex.FEMALE, Sex.NONE],
-        message: "It isn't alloved",
-        default: "none",
-      },
-    },
-
     email: {
       type: String,
       required: [true, "Email is required"],
@@ -34,6 +24,11 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: [true, "Password is required"],
+    },
+    subscription: {
+      type: String,
+      enum: ["free", "pro", "premium"],
+      default: "free",
     },
     token: {
       type: String,

@@ -1,12 +1,18 @@
 const Contact = require("./schemas/contact");
 
-const getAll = async () => {
-  const result = await Contact.find({});
+const getAll = async (userId) => {
+  const result = await Contact.find({ owner: userId }).populate({
+    path: "owner",
+    select: "name email",
+  });
   return result;
 };
 
-const getById = async (id) => {
-  const result = await Contact.findOne({ _id: id });
+const getById = async (id, userId) => {
+  const result = await Contact.findOne({ _id: id, owner: userId }).populate({
+    path: "owner",
+    select: "name email",
+  });
   return result;
 };
 
@@ -15,18 +21,19 @@ const create = async (body) => {
   return result;
 };
 
-const update = async (id, body) => {
+const update = async (id, body, userId) => {
   const result = await Contact.findByIdAndUpdate(
-    { _id: id },
+    { _id: id, owner: userId },
     { ...body },
     { new: true }
   );
   return result;
 };
 
-const remove = async (id) => {
+const remove = async (id, userId) => {
   const result = await Contact.findByIdAndDelete({
     _id: id,
+    owner: userId,
   });
   return result;
 };
