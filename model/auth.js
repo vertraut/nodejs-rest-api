@@ -1,4 +1,4 @@
-const User = require("./schemas/user");
+const User = require("./schemas/auth");
 
 const findByEmail = async (email) => {
   return await User.findOne({ email });

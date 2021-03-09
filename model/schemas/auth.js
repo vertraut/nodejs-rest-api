@@ -1,8 +1,6 @@
 const { Schema, model } = require("mongoose");
 const bcrypt = require("bcryptjs");
 
-const { Sex } = require("../../helpers/constats");
-
 const SALT_WORK_FACKTOR = 8;
 
 const userSchema = new Schema(
@@ -45,6 +43,7 @@ userSchema.pre("save", async function (next) {
   }
   const salt = await bcrypt.genSaltSync(SALT_WORK_FACKTOR);
   this.password = await bcrypt.hash(this.password, salt, null);
+  next();
 });
 
 userSchema.methods.validPassword = async function (pass) {

@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const { HttpCode } = require("../helpers/constats");
 
-const Users = require("../model/users");
+const Users = require("../model/auth");
 
 const SECRET_KEY = process.env.JWT_SECRET;
 
@@ -37,7 +37,8 @@ const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await Users.findByEmail(email);
-    if (!user || !user.validPassword(password)) {
+    const isValidPassword = await user.validPassword(password);
+    if (!user || !isValidPassword) {
       return res.status(HttpCode.UNAUTHORIZED).json({
         status: "error",
         code: HttpCode.CONFLICT,
