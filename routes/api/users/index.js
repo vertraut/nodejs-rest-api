@@ -1,11 +1,16 @@
 const express = require("express");
 const router = express.Router();
 // const validate = require("./validation");
-const usersControllers = require("../../../controllers/users");
+const contactControllers = require("../../../controllers/contacts");
 const guard = require("../../../helpers/guard");
 
-router.post("/registration", usersControllers.reg);
-router.post("/login", usersControllers.login);
-router.post("/logout", guard, usersControllers.logout);
+router
+  .get("/", guard, contactControllers.getAll)
+  .post("/", guard, validate.createContact, contactControllers.create);
+
+router
+  .get("/:id", guard, contactControllers.getById)
+  .put("/:id", guard, validate.updateContact, contactControllers.update)
+  .delete("/:id", guard, contactControllers.remove);
 
 module.exports = router;

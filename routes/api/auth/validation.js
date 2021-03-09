@@ -18,10 +18,10 @@ const validate = (schema, obj, next) => {
   next();
 };
 
-module.exports.createContact = (req, _res, next) => {
+module.exports.createUser = (req, _res, next) => {
   return validate(schemaDefault, req.body, next);
 };
 
-module.exports.updateContact = (req, _res, next) => {
-  return validate(schemaDefault, req.body, next);
-};
+// module.exports.updateUser = (req, _res, next) => {
+//   return validate(schemaDefault, req.body, next);
+// };
