@@ -25,7 +25,7 @@ const reg = async (req, res, next) => {
       data: {
         id: newUser.id,
         email: newUser.email,
-        name: newUser.name,
+        subscription: newUser.subscription,
       },
     });
   } catch (e) {

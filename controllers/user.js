@@ -3,12 +3,13 @@ const { HttpCode } = require("../helpers/constats");
 
 const current = async (req, res, next) => {
   try {
-    // const userId = req.user.id;
-    // const user = await Contacts.getAll(userId);
+    const userEmail = req.user.email;
+    const userSubscription = req.user.subscription;
+
     return res.status(HttpCode.OK).json({
       status: "success",
-      //   code: HttpCode.OK,
-      //   data: {},
+      code: HttpCode.OK,
+      data: { email: userEmail, subscription: userSubscription },
     });
   } catch (e) {
     next(e);

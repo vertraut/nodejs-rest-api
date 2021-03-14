@@ -1,9 +1,9 @@
 const Joi = require("joi");
 
 const schemaDefault = Joi.object({
-  name: Joi.string().alphanum().min(3).max(30).required(),
   email: Joi.string().email().required(),
   password: Joi.string().required(),
+  subscription: Joi.string().optional(),
 });
 
 const validate = (schema, obj, next) => {
@@ -21,7 +21,3 @@ const validate = (schema, obj, next) => {
 module.exports.createUser = (req, _res, next) => {
   return validate(schemaDefault, req.body, next);
 };
-
-// module.exports.updateUser = (req, _res, next) => {
-//   return validate(schemaDefault, req.body, next);
-// };
