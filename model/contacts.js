@@ -1,11 +1,23 @@
+const { off } = require("./schemas/contact");
 const Contact = require("./schemas/contact");
 
-const getAll = async (userId) => {
-  const result = await Contact.find({ owner: userId }).populate({
-    path: "owner",
-    select: "name email",
-  });
-  return result;
+const getAll = async (
+  userId,
+  { sortBy, sortByDesc, filter, limit = "5", offset = "0" }
+) => {
+  const result = await Contact.paginate(
+    { owner: userId },
+    {
+      limit,
+      offset,
+      populate: {
+        path: "owner",
+        select: "name email",
+      },
+    }
+  );
+  const { docs: contacts, totalDocs: total } = result;
+  return { total: total.toString(), limit, offset, contacts };
 };
 
 const getById = async (id, userId) => {
@@ -22,7 +34,7 @@ const create = async (body) => {
 };
 
 const update = async (id, body, userId) => {
-  const result = await Contact.findByIdAndUpdate(
+  const result = await Contact.findOneAndUpdate(
     { _id: id, owner: userId },
     { ...body },
     { new: true }
@@ -31,7 +43,7 @@ const update = async (id, body, userId) => {
 };
 
 const remove = async (id, userId) => {
-  const result = await Contact.findByIdAndDelete({
+  const result = await Contact.findOneAndRemove({
     _id: id,
     owner: userId,
   });
