@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const { HttpCode } = require("../helpers/constats");
 
-const Users = require("../model/auth");
+const Users = require("../model/user");
 
 const SECRET_KEY = process.env.JWT_SECRET;
 

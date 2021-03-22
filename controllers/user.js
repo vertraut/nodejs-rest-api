@@ -1,4 +1,3 @@
-// const Contacts = require("../model/auth");
 const { HttpCode } = require("../helpers/constats");
 const fs = require("fs").promises;
 const path = require("path");
@@ -7,7 +6,7 @@ const { promisify } = require("util");
 const cloudinary = require("cloudinary").v2;
 require("dotenv").config();
 
-const Users = require("../model/users");
+const Users = require("../model/user");
 const createFolderIsExist = require("../helpers/create-dir");
 
 cloudinary.config({
@@ -38,20 +37,15 @@ const avatars = async (req, res, next) => {
     const id = req.user.id;
     // const avatarUrl = await saveAvatarToStatic(req);
     const {
-      public_id,
-      format,
-      width,
-      height,
-      bytes,
-      url,
-      original_filename,
+      public_id: imgIdCloud,
+      secure_url: avatarUrl,
     } = await saveAvatarToCloud(req);
 
-    // await Users.updateAvatar(id, avatarUrl);
+    await Users.updateAvatar(id, avatarUrl, imgIdCloud);
     return res.json({
       status: "success",
       code: HttpCode.OK,
-      data: { public_id, format, width, height, bytes, url, original_filename },
+      data: { avatarUrl },
     });
   } catch (e) {
     next(e);
@@ -84,9 +78,11 @@ const saveAvatarToCloud = async (req) => {
   const pathFile = req.file.path;
   const result = await uploadCloud(pathFile, {
     folder: "avatars",
-    transformation: { width: 250, crop: "pad" },
+    transformation: { width: 250, height: 250, crop: "fill" },
   });
-
+  cloudinary.uploader.destroy(req.user.imgIdCloud, (err, result) => {
+    console.log(err, result);
+  });
   try {
     await fs.unlink(
       path.join(process.cwd(), AVATARS_OF_USERS, req.user.avatar)

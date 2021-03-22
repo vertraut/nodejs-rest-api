@@ -1,4 +1,4 @@
-const User = require("./schemas/auth");
+const User = require("./schemas/user");
 
 const findByEmail = async (email) => {
   return await User.findOne({ email });
@@ -17,4 +17,8 @@ const updateToken = async (id, token) => {
   return await User.updateOne({ _id: id }, { token });
 };
 
-module.exports = { findByEmail, findById, create, updateToken };
+const updateAvatar = async (id, avatar, imgIdCloud) => {
+  return await User.updateOne({ _id: id }, { avatar, imgIdCloud });
+};
+
+module.exports = { findByEmail, findById, create, updateToken, updateAvatar };
