@@ -3,9 +3,20 @@ const { HttpCode } = require("../helpers/constats");
 const fs = require("fs").promises;
 const path = require("path");
 const Jimp = require("jimp");
+const { promisify } = require("util");
+const cloudinary = require("cloudinary").v2;
 require("dotenv").config();
+
 const Users = require("../model/users");
 const createFolderIsExist = require("../helpers/create-dir");
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+});
+
+const uploadCloud = promisify(cloudinary.uploader.upload);
 
 const current = async (req, res, next) => {
   try {
@@ -25,12 +36,22 @@ const current = async (req, res, next) => {
 const avatars = async (req, res, next) => {
   try {
     const id = req.user.id;
-    const avatarUrl = await saveAvatarToStatic(req);
-    await Users.updateAvatar(id, avatarUrl);
+    // const avatarUrl = await saveAvatarToStatic(req);
+    const {
+      public_id,
+      format,
+      width,
+      height,
+      bytes,
+      url,
+      original_filename,
+    } = await saveAvatarToCloud(req);
+
+    // await Users.updateAvatar(id, avatarUrl);
     return res.json({
       status: "success",
       code: HttpCode.OK,
-      data: { avatarUrl },
+      data: { public_id, format, width, height, bytes, url, original_filename },
     });
   } catch (e) {
     next(e);
@@ -57,6 +78,23 @@ const saveAvatarToStatic = async (req) => {
     console.log(e.message);
   }
   return avatarUrl;
+};
+
+const saveAvatarToCloud = async (req) => {
+  const pathFile = req.file.path;
+  const result = await uploadCloud(pathFile, {
+    folder: "avatars",
+    transformation: { width: 250, crop: "pad" },
+  });
+
+  try {
+    await fs.unlink(
+      path.join(process.cwd(), AVATARS_OF_USERS, req.user.avatar)
+    );
+  } catch (e) {
+    console.log(e.message);
+  }
+  return result;
 };
 
 module.exports = { current, avatars };
