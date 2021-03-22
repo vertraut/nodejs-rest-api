@@ -84,9 +84,7 @@ const saveAvatarToCloud = async (req) => {
     console.log(err, result);
   });
   try {
-    await fs.unlink(
-      path.join(process.cwd(), AVATARS_OF_USERS, req.user.avatar)
-    );
+    await fs.unlink(pathFile);
   } catch (e) {
     console.log(e.message);
   }
