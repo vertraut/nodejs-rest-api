@@ -1,4 +1,3 @@
-const { off } = require("./schemas/contact");
 const Contact = require("./schemas/contact");
 
 const getAll = async (
